@@ -333,7 +333,7 @@ select{font:inherit;font-size:16px;color:var(--ink);background:var(--soft);borde
     <ul class="rules">
       <li id="ruleTime"></li>
       <li id="ruleClock"></li>
-      <li>+2 en +3 kun je alleen invoeren als de klok loopt, of tot 10 seconden nadat hij is gestopt (voor een score vlak voor het fluitsignaal of de eindtoeter). Vrije worpen (+1) kun je altijd invoeren, want die worden genomen terwijl de klok stilstaat.</li>
+      <li>+2 en +3 kun je alleen invoeren terwijl de klok loopt. Voer een score dus in vóór je de klok stopt. Vrije worpen (+1) kun je altijd invoeren, want die worden genomen terwijl de klok stilstaat.</li>
       <li>Geen time-outs. Tussen periodes wordt gewisseld volgens het slangenformulier.</li>
       <li>Schot van buiten de bucket telt als driepunter (zie de tekening hieronder). Bij 5 persoonlijke fouten moet een speler eruit.</li>
       <li>Bij 50 punten verschil wordt de stand bevroren. Fouten en tijd lopen door.</li>
@@ -438,7 +438,7 @@ async function keepAwake(){try{if('wakeLock' in navigator&&!wake){wake=await nav
 
 function startClock(){S.running=true;lastTs=performance.now();keepAwake()}
 function stopClock(){S.running=false;stoppedAt=Date.now();save()}
-function scoreOpen(){return (S.running&&S.phase==='play')||(Date.now()-stoppedAt<GRACE)}
+function scoreOpen(){return S.running&&S.phase==='play'}
 
 function endPeriod(){
   horn();S.running=false;stoppedAt=Date.now();
@@ -475,7 +475,7 @@ function adjust(sec){
 }
 
 function addPts(k,pid,n){
-  if(n>1&&!scoreOpen()){toast('De klok staat stil: +2 en +3 kan alleen als de klok loopt. Vrije worpen (+1) kun je wel invoeren.');return}
+  if(n>1&&!scoreOpen()){toast('De klok staat stil: +2 en +3 kan alleen als de klok loopt. Vrije worpen (+1) kun je wel invoeren. Vergissing? Start de klok even, voer de score in en zet de tijd terug met −1.');return}
   if(S.frozen){toast('Stand is bevroren (50 punten verschil). Punten worden niet meer genoteerd.');return}
   const p=S[k].players.find(x=>x.id===pid);if(!p)return;
   snap();p.pts+=n;addLog(S[k].name+' '+lbl(p)+' +'+n,{k,pid:p.id,s:' +'+n,n});
