@@ -103,6 +103,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .pbtn{display:flex;gap:5px}
 .pbtn button{min-width:44px;padding:0 6px;font-family:var(--display);font-weight:700;font-size:1.15rem}
 .pbtn .f{color:var(--danger)}
+.teams.locked .pbtn button[data-a="2"],.teams.locked .pbtn button[data-a="3"]{opacity:.35}
 .empty{padding:16px;color:var(--muted)}
 
 /* Panelen */
@@ -332,6 +333,7 @@ select{font:inherit;font-size:16px;color:var(--ink);background:var(--soft);borde
     <ul class="rules">
       <li id="ruleTime"></li>
       <li id="ruleClock"></li>
+      <li>+2 en +3 kun je alleen invoeren als de klok loopt, of tot 10 seconden nadat hij is gestopt (voor een score vlak voor het fluitsignaal of de eindtoeter). Vrije worpen (+1) kun je altijd invoeren, want die worden genomen terwijl de klok stilstaat.</li>
       <li>Geen time-outs. Tussen periodes wordt gewisseld volgens het slangenformulier.</li>
       <li>Schot van buiten de bucket telt als driepunter (zie de tekening hieronder). Bij 5 persoonlijke fouten moet een speler eruit.</li>
       <li>Bij 50 punten verschil wordt de stand bevroren. Fouten en tijd lopen door.</li>
@@ -399,6 +401,7 @@ S.running=false;
 if(!S.cfg)S.cfg=Object.assign({},DEF);
 function applyCfg(){PERIOD=Math.round(S.cfg.len*60000)}
 applyCfg();
+let stoppedAt=0;const GRACE=10000;
 let lastTs=0, hist=[], toastT=null, wake=null, ac=null, resetArm=0, resetT=null;
 const editing={home:false,away:false};
 let showTab='home';
@@ -434,10 +437,11 @@ function horn(){
 async function keepAwake(){try{if('wakeLock' in navigator&&!wake){wake=await navigator.wakeLock.request('screen');wake.addEventListener('release',()=>wake=null)}}catch(e){}}
 
 function startClock(){S.running=true;lastTs=performance.now();keepAwake()}
-function stopClock(){S.running=false;save()}
+function stopClock(){S.running=false;stoppedAt=Date.now();save()}
+function scoreOpen(){return (S.running&&S.phase==='play')||(Date.now()-stoppedAt<GRACE)}
 
 function endPeriod(){
-  horn();S.running=false;
+  horn();S.running=false;stoppedAt=Date.now();
   addLog('Einde periode '+S.period);
   if(S.period>=S.cfg.n){S.phase='end';toast('Einde wedstrijd. Controleer het DWF.');setTimeout(openSum,900)}
   else{S.phase='break';S.breakRemaining=breakLen(S.period);S.running=true;lastTs=performance.now();
@@ -471,6 +475,7 @@ function adjust(sec){
 }
 
 function addPts(k,pid,n){
+  if(n>1&&!scoreOpen()){toast('De klok staat stil: +2 en +3 kan alleen als de klok loopt. Vrije worpen (+1) kun je wel invoeren.');return}
   if(S.frozen){toast('Stand is bevroren (50 punten verschil). Punten worden niet meer genoteerd.');return}
   const p=S[k].players.find(x=>x.id===pid);if(!p)return;
   snap();p.pts+=n;addLog(S[k].name+' '+lbl(p)+' +'+n,{k,pid:p.id,s:' +'+n,n});
@@ -500,6 +505,7 @@ function toggleArrow(){
 
 function renderClock(){
   const c=$('clock'),go=$('go');
+  $('teams').classList.toggle('locked',!scoreOpen());
   let ms=S.phase==='break'?S.breakRemaining:(S.phase==='end'?0:S.remaining);
   c.textContent=fmt(ms);
   c.className='clock num '+(S.phase==='break'?'brk':(S.running?'run':'stop'));
