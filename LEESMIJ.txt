@@ -1,0 +1,37 @@
+TAFEL U12 - INSTALLEREN ALS APP OP JE TELEFOON
+==============================================
+
+Deze map is een "web-app" (PWA). Je zet hem één keer online en installeert
+hem daarna vanuit Chrome op je telefoon. Daarna opent hij als losse app met
+eigen icoon, zonder adresbalk, en werkt hij ook zonder internet.
+
+STAP 1 - Zet de map online (gratis, eenmalig)
+  Optie A: Netlify
+    1. Ga op je computer naar https://app.netlify.com/drop
+    2. Maak een gratis account (of log in).
+    3. Sleep deze hele map (tafel-u12-app) naar de pagina.
+    4. Je krijgt een adres zoals https://iets-willekeurigs.netlify.app
+  Optie B: GitHub Pages
+    1. Maak een nieuwe repository op github.com en upload alle bestanden.
+    2. Ga naar Settings > Pages en kies "Deploy from a branch" (main, / root).
+    3. Je krijgt een adres zoals https://jouwnaam.github.io/tafel-u12/
+
+  Let op: de app moet via https:// geopend worden. Het bestand direct vanaf
+  je telefoon openen werkt niet als installeerbare app.
+
+STAP 2 - Installeer op je Samsung
+  1. Open het adres in Chrome op je telefoon.
+  2. Tik op de drie puntjes rechtsboven.
+  3. Kies "App installeren" (of "Toevoegen aan startscherm").
+  4. Het icoon "Tafel U12" staat nu tussen je apps.
+
+  Samsung Internet: tik op het menu (drie streepjes) en kies
+  "Pagina toevoegen aan" > "Startscherm".
+
+GOED OM TE WETEN
+  - Na de eerste keer openen werkt de app ook zonder internet.
+  - Alles wat je invoert blijft alleen op die telefoon bewaard.
+  - Het scherm blijft aan zolang de klok loopt.
+  - Bijwerken: zet de nieuwe bestanden op dezelfde plek online. De app haalt
+    de nieuwe versie op bij de volgende keer openen met internet (soms is
+    twee keer openen nodig).
